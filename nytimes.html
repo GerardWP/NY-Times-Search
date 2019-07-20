@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+​
+
+<head>
+    <title>NYT Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+​
+
+<body class="container">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron">
+                <div class="container">
+                    <h1 class="display-4 centre">New York Times Search</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <h5 class="card-header">Search Parameters</h5>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="searchTerm">Search Term:</label>
+                        <input type="text" class="form-control" id="searchTerm" placeholder="Ronald Drumpf...">
+                    </div>
+                    <div class="form-group">
+                        <label for="numberResults">Number of Records to Retrieve: (Max of 10)</label>
+                        <input type="number" min="1" max="10" class="form-control" id="numberResults" placeholder="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="startYear">Start Year (Optional):</label>
+                        <input type="date" class="form-control" id="startYear" placeholder="1989">
+                    </div>
+                    <div class="form-group">
+                        <label for="endYear">End Year (Optional):</label>
+                        <input type="date" class="form-control" id="endYear" placeholder="Password">
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+                    <button onclick=location.reload() class="btn btn-warning">Clear Results</button>
+                    </form>
+                </div>
+            </div>
+            <form>
+                ​
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <h5 class="card-header">Top Articles</h5>
+                <div class="card-body" id="resultList">
+                    ​
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Made with Spite and Hatred
+    </div>
+    ​
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $("#submitBtn").click(function () {
+            var startYear, endYear;
+            var APIKey = "WfWAR4HLPoK2y27AlizvKFWrErxrzyG2";
+            var searchTerm = $("#searchTerm").val();
+            var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=" + searchTerm +
+                "&api-key=" +
+                APIKey;
+
+            if ($("#startYear").val()) {
+                startYear = "&begin_date=" + $("#startYear").val();
+                queryURL += startYear;
+            }
+
+            if ($("#endYear").val()) {
+                endYear = "&end_date=" + $("#endYear").val();
+                queryURL += endYear;
+            }
+
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (response) {
+                var resultNum = "";
+                $('#numberResults').val() ? resultNum = $('#numberResults').val() : resultNum = 10;
+                var results = response.response.docs;
+                results.forEach(function (doc, i) {
+                    if (i < resultNum) {
+                        var newCard = $('<div class="card">');
+                        $(newCard).append('<h5 class="card-header"><a href=' + doc.web_url +
+                            'target="_blank">' +
+                            doc.headline.main + '</a></h5>');
+                        $('#resultList').append(newCard);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
